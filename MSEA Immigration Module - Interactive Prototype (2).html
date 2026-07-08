@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MSEA Immigration Guidance Module — Prototype</title>
+<style>
+:root{
+  --navy:#1B3A6B;
+  --navy-dark:#11264A;
+  --navy-light:#2A4D85;
+  --gold:#C8922A;
+  --gold-light:#F2DFB8;
+  --teal:#1A7F8E;
+  --teal-light:#E1F0F2;
+  --green:#2E7D32;
+  --green-light:#E8F5E9;
+  --red:#B71C1C;
+  --red-light:#FDEAEA;
+  --terracotta:#B5572B;
+  --terracotta-light:#FBEAE2;
+  --ink:#1A1A1A;
+  --ink-soft:#444444;
+  --ink-faint:#717171;
+  --paper:#F7F8FA;
+  --line:#DEE3EA;
+  --white:#FFFFFF;
+  --radius:10px;
+  --radius-sm:6px;
+  --shadow:0 1px 3px rgba(20,30,50,0.08), 0 1px 2px rgba(20,30,50,0.06);
+  --shadow-md:0 4px 14px rgba(20,30,50,0.10);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Inter",Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);}
+body{font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;}
+h1,h2,h3,h4{margin:0;font-weight:600;letter-spacing:-0.01em;}
+p{margin:0 0 0.9em;}
+button{font-family:inherit;cursor:pointer;}
+a{color:inherit;}
+
+/* ===== App Shell ===== */
+#app{display:flex;min-height:100vh;}
+
+/* Sidebar */
+#sidebar{
+  width:260px;flex-shrink:0;background:var(--navy);color:var(--white);
+  display:flex;flex-direction:column;position:sticky;top:0;height:100vh;
+  overflow-y:auto;
+}
+.brand{padding:22px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.12);}
+.brand-tag{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold);font-weight:700;margin-bottom:4px;}
+.brand-title{font-size:15px;font-weight:600;line-height:1.3;}
+.nav-section-label{font-size:10.5px;text-transform:uppercase;letter-spacing:0.07em;color:rgba(255,255,255,0.45);padding:18px 20px 8px;font-weight:700;}
+.navlist{list-style:none;margin:0;padding:0 10px;}
+.navitem{margin-bottom:3px;}
+.navlink{
+  display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+  padding:10px 12px;border-radius:var(--radius-sm);border:none;background:transparent;
+  color:rgba(255,255,255,0.82);font-size:13.5px;font-weight:500;transition:background .12s;
+  position:relative;
+}
+.navlink:hover{background:rgba(255,255,255,0.08);color:#fff;}
+.navlink.active{background:var(--gold);color:var(--navy-dark);font-weight:700;}
+.navlink .num{
+  width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:10.5px;font-weight:700;flex-shrink:0;background:rgba(255,255,255,0.15);color:#fff;
+}
+.navlink.active .num{background:var(--navy-dark);color:var(--gold);}
+.navlink .badge{
+  margin-left:auto;font-size:9px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;
+  padding:2px 6px;border-radius:4px;background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);
+}
+.navlink.fully-built .badge{background:var(--teal);color:#fff;}
+.subnav{list-style:none;margin:2px 0 6px 30px;padding:0;border-left:1px solid rgba(255,255,255,0.15);}
+.subnavlink{
+  display:block;padding:6px 0 6px 12px;font-size:12.5px;color:rgba(255,255,255,0.6);
+  border:none;background:none;text-align:left;width:100%;
+}
+.subnavlink:hover{color:#fff;}
+.subnavlink.active{color:var(--gold);font-weight:600;}
+.sidebar-foot{margin-top:auto;padding:16px 20px;border-top:1px solid rgba(255,255,255,0.12);font-size:11.5px;color:rgba(255,255,255,0.45);}
+
+/* Main column */
+#main{flex:1;min-width:0;display:flex;flex-direction:column;}
+#topbar{
+  background:var(--white);border-bottom:1px solid var(--line);padding:14px 32px;
+  display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5;
+}
+.breadcrumb{font-size:12.5px;color:var(--ink-faint);display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.breadcrumb b{color:var(--ink);font-weight:600;}
+.breadcrumb .sep{color:var(--line);}
+.topbar-right{display:flex;align-items:center;gap:14px;}
+.proto-pill{
+  font-size:10.5px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;
+  padding:5px 10px;border-radius:20px;
+}
+.proto-pill.vertical{background:var(--teal-light);color:var(--teal);}
+.proto-pill.horizontal{background:#F1EFE8;color:#5F5E5A;}
+.user-chip{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-soft);}
+.avatar{width:28px;height:28px;border-radius:50%;background:var(--gold-light);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+
+#content{flex:1;padding:32px;max-width:980px;width:100%;margin:0 auto;}
+
+/* ===== Reusable UI ===== */
+.card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;}
+.card + .card{margin-top:16px;}
+.eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--teal);margin-bottom:6px;}
+.page-title{font-size:24px;margin-bottom:6px;}
+.page-sub{color:var(--ink-soft);font-size:14.5px;margin-bottom:24px;}
+
+.btn{
+  display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:var(--radius-sm);
+  border:1px solid var(--line);background:var(--white);font-size:13.5px;font-weight:600;color:var(--ink);
+  transition:all .12s;
+}
+.btn:hover{border-color:var(--navy);background:var(--paper);}
+.btn-primary{background:var(--navy);color:#fff;border-color:var(--navy);}
+.btn-primary:hover{background:var(--navy-dark);border-color:var(--navy-dark);}
+.btn-gold{background:var(--gold);color:#fff;border-color:var(--gold);}
+.btn-gold:hover{background:#B07F22;border-color:#B07F22;}
+.btn:disabled{opacity:0.45;cursor:not-allowed;}
+.btn-row{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap;}
+
+.module-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;}
+.module-card{
+  background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:20px;
+  display:flex;flex-direction:column;gap:10px;position:relative;transition:box-shadow .15s, transform .15s;cursor:pointer;
+}
+.module-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.module-card .mc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.mc-icon{
+  width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:700;flex-shrink:0;
+}
+.mc-status{font-size:9.5px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;padding:3px 8px;border-radius:20px;white-space:nowrap;}
+.mc-status.built{background:var(--teal-light);color:var(--teal);}
+.mc-status.preview{background:#F1EFE8;color:#6B6A63;}
+.mc-title{font-size:15.5px;font-weight:700;}
+.mc-desc{font-size:13px;color:var(--ink-soft);line-height:1.5;flex:1;}
+.mc-progress-track{height:5px;background:var(--paper);border-radius:4px;overflow:hidden;margin-top:2px;}
+.mc-progress-fill{height:100%;background:var(--teal);border-radius:4px;}
+
+.notice{
+  display:flex;gap:12px;padding:14px 16px;border-radius:var(--radius-sm);border:1px solid;font-size:13px;line-height:1.5;
+}
+.notice.info{background:var(--teal-light);border-color:#BEE0E5;color:#0E4A53;}
+.notice.preview{background:#FAF8F2;border-color:#EADFC4;color:#6B5418;}
+.notice-icon{flex-shrink:0;font-size:16px;}
+
+/* Gagne / instructional tag */
+.tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;padding:3px 9px;border-radius:5px;background:var(--navy);color:#fff;margin-bottom:14px;}
+
+/* scenario box */
+.scenario-box{
+  background:#FDF6EA;border:1px solid var(--gold-light);border-radius:var(--radius-sm);
+  padding:18px 20px;margin-bottom:20px;font-size:14px;
+}
+.scenario-box b{color:var(--navy);}
+
+/* choice list */
+.choice{
+  display:block;width:100%;text-align:left;padding:13px 16px;margin-bottom:9px;
+  border:1.5px solid var(--line);border-radius:var(--radius-sm);background:var(--white);
+  font-size:13.8px;color:var(--ink);transition:all .12s;
+}
+.choice:hover:not(:disabled){border-color:var(--navy-light);background:var(--paper);}
+.choice .letter{display:inline-flex;width:22px;height:22px;border-radius:50%;background:var(--paper);border:1px solid var(--line);align-items:center;justify-content:center;font-size:11px;font-weight:700;margin-right:10px;}
+.choice:disabled{cursor:default;}
+.choice.correct{background:var(--green-light);border-color:var(--green);}
+.choice.correct .letter{background:var(--green);color:#fff;border-color:var(--green);}
+.choice.incorrect{background:var(--red-light);border-color:var(--red);}
+.choice.incorrect .letter{background:var(--red);color:#fff;border-color:var(--red);}
+.choice.dim{opacity:0.5;}
+
+/* feedback panel */
+.feedback-panel{margin-top:18px;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--line);animation:slideIn .25s ease;}
+@keyframes slideIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+.feedback-head{padding:12px 18px;font-weight:700;font-size:13.5px;display:flex;align-items:center;gap:8px;}
+.feedback-head.correct{background:var(--green);color:#fff;}
+.feedback-head.incorrect{background:var(--terracotta);color:#fff;}
+.feedback-body{padding:16px 18px;background:#fff;font-size:13.5px;color:var(--ink-soft);}
+.feedback-body p:last-child{margin-bottom:0;}
+
+/* progress bar top of content */
+.progress-wrap{display:flex;align-items:center;gap:10px;margin-bottom:22px;}
+.progress-track{flex:1;height:6px;background:var(--line);border-radius:4px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--gold);border-radius:4px;transition:width .3s ease;}
+.progress-label{font-size:11.5px;color:var(--ink-faint);white-space:nowrap;font-weight:600;}
+
+/* step nav pills (section 2 sub pages) */
+.steps{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:24px;}
+.step-pill{
+  font-size:11.5px;padding:6px 11px;border-radius:20px;background:var(--paper);border:1px solid var(--line);
+  color:var(--ink-faint);font-weight:600;cursor:pointer;
+}
+.step-pill.done{background:var(--teal-light);color:var(--teal);border-color:#BEE0E5;}
+.step-pill.current{background:var(--navy);color:#fff;border-color:var(--navy);}
+
+/* todo/dos donts */
+.dual-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:680px){.dual-col{grid-template-columns:1fr;}}
+.col-card{border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--line);}
+.col-head{padding:10px 16px;font-weight:700;font-size:13px;color:#fff;display:flex;align-items:center;gap:8px;}
+.col-head.do{background:var(--green);}
+.col-head.dont{background:var(--red);}
+.col-body{padding:14px 16px;background:#fff;}
+.col-body ul{margin:0;padding-left:18px;font-size:13px;color:var(--ink-soft);line-height:1.7;}
+
+/* role cards */
+.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:6px;}
+@media(max-width:680px){.role-grid{grid-template-columns:1fr;}}
+.role-card{border:1px solid var(--line);border-radius:var(--radius-sm);overflow:hidden;}
+.role-head{background:var(--teal);color:#fff;padding:9px 14px;font-size:12.5px;font-weight:700;}
+.role-body{padding:13px 14px;font-size:12.8px;color:var(--ink-soft);background:#fff;}
+
+/* steps numbered */
+.proto-step{display:flex;gap:12px;padding:13px 0;border-bottom:1px solid var(--line);}
+.proto-step:last-child{border-bottom:none;}
+.proto-step-num{width:26px;height:26px;border-radius:50%;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.proto-step-title{font-weight:700;font-size:13.8px;margin-bottom:2px;}
+.proto-step-desc{font-size:13px;color:var(--ink-soft);}
+
+/* faq accordion */
+.faq-item{border:1px solid var(--line);border-radius:var(--radius-sm);margin-bottom:8px;overflow:hidden;}
+.faq-q{
+  width:100%;text-align:left;padding:13px 16px;background:#fff;border:none;font-size:13.6px;font-weight:600;
+  display:flex;justify-content:space-between;align-items:center;color:var(--navy);
+}
+.faq-q .chev{transition:transform .2s;color:var(--ink-faint);font-size:11px;}
+.faq-q.open .chev{transform:rotate(180deg);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .25s ease;background:var(--paper);}
+.faq-a-inner{padding:0 16px 14px;font-size:13px;color:var(--ink-soft);}
+
+/* job aid card */
+.jobaid{
+  display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--radius-sm);
+  margin-bottom:10px;background:#fff;
+}
+.jobaid-icon{width:38px;height:38px;border-radius:8px;background:var(--gold-light);color:#9A6A1B;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.jobaid-title{font-weight:700;font-size:13.5px;}
+.jobaid-desc{font-size:12px;color:var(--ink-faint);}
+.jobaid-dl{margin-left:auto;}
+
+/* reflection textareas */
+.reflect-q{font-weight:600;font-size:13.6px;margin-bottom:8px;color:var(--navy);}
+textarea.reflect-input{
+  width:100%;min-height:64px;border:1px solid var(--line);border-radius:var(--radius-sm);padding:10px 12px;
+  font-family:inherit;font-size:13.3px;resize:vertical;background:var(--paper);
+}
+textarea.reflect-input:focus{outline:none;border-color:var(--navy-light);background:#fff;}
+.char-count{font-size:11px;color:var(--ink-faint);text-align:right;margin-top:4px;}
+
+/* poll */
+.poll-row{margin-bottom:16px;}
+.poll-q{font-size:13.5px;font-weight:600;margin-bottom:8px;}
+.poll-scale{display:flex;gap:6px;}
+.poll-opt{flex:1;text-align:center;padding:8px 4px;border:1px solid var(--line);border-radius:var(--radius-sm);font-size:10.8px;color:var(--ink-faint);background:#fff;font-weight:600;}
+.poll-opt.selected{background:var(--navy);color:#fff;border-color:var(--navy);}
+
+/* knowledge check */
+.kc-item{border:1px solid var(--line);border-radius:var(--radius-sm);padding:16px;margin-bottom:12px;background:#fff;}
+.kc-num{display:inline-flex;width:22px;height:22px;border-radius:50%;background:var(--teal-light);color:var(--teal);align-items:center;justify-content:center;font-size:11px;font-weight:700;margin-right:8px;}
+.kc-q{font-weight:600;font-size:13.6px;margin-bottom:10px;display:inline;}
+.kc-opts{margin-left:30px;}
+.kc-opt{
+  display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;font-size:13px;cursor:pointer;
+  border:1px solid transparent;
+}
+.kc-opt:hover{background:var(--paper);}
+.kc-opt input{accent-color:var(--navy);}
+.kc-result{margin-top:10px;margin-left:30px;font-size:12.5px;font-weight:600;padding:8px 10px;border-radius:6px;display:none;}
+.kc-result.show{display:block;}
+.kc-result.right{background:var(--green-light);color:var(--green);}
+.kc-result.wrong{background:var(--red-light);color:var(--red);}
+
+.score-banner{
+  display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-radius:var(--radius-sm);
+  background:var(--navy);color:#fff;margin-bottom:20px;
+}
+.score-num{font-size:26px;font-weight:700;}
+.score-label{font-size:11.5px;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.65);font-weight:700;}
+
+/* lightbox-ish disabled overlay used in horizontal-only screens */
+.locked-overlay{
+  position:relative;
+}
+.locked-tag{
+  position:absolute;top:10px;right:10px;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;
+  background:rgba(27,58,107,0.92);color:#fff;padding:4px 9px;border-radius:5px;
+}
+
+footer.proto-footer{padding:20px 32px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-faint);text-align:center;}
+
+@media(max-width:860px){
+  #sidebar{position:fixed;left:-280px;z-index:50;transition:left .2s;box-shadow:var(--shadow-md);}
+  #sidebar.open{left:0;}
+  #content{padding:20px;}
+  .role-grid,.dual-col{grid-template-columns:1fr;}
+}
+.menu-toggle{display:none;background:none;border:none;font-size:20px;color:var(--navy);}
+@media(max-width:860px){.menu-toggle{display:block;}}
+</style>
+</head>
+<body>
+<div id="app">
+  <nav id="sidebar"></nav>
+  <div id="main">
+    <div id="topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')"><i>&#9776;</i></button>
+        <div class="breadcrumb" id="breadcrumb"></div>
+      </div>
+      <div class="topbar-right">
+        <span class="proto-pill" id="protoPill"></span>
+        <div class="user-chip"><div class="avatar">KM</div><span>Learner Preview</span></div>
+      </div>
+    </div>
+    <div id="content"></div>
+    <footer class="proto-footer">MSEA Immigration Guidance Module — Interactive Prototype · Built for instructional design review, not for public release</footer>
+  </div>
+</div>
+<script>
+/* ============================================================
+   HORIZONTAL LAYER
+   Course Home + non-functional module overview screens
+   ============================================================ */
+
+function colorBg(c){
+  const map = { purple:"#EEEDFE", teal:"#E1F5EE", coral:"#FAECE7", pink:"#FBEAF0", amber:"#FAEEDA" };
+  return map[c] || "#F1EFE8";
+}
+function colorFg(c){
+  const map = { purple:"#534AB7", teal:"#0F6E56", coral:"#993C1D", pink:"#993556", amber:"#854F0B" };
+  return map[c] || "#5F5E5A";
+}
+
+function renderHome() {
+  return `
+    <div class="eyebrow">Course Home</div>
+    <h1 class="page-title">Introduction to MSDE Immigration Guidance</h1>
+    <p class="page-sub">A self-paced, nonlinear learning experience for MSEA staff, educators, and school-based personnel. Complete sections in any order based on your immediate workplace need.</p>
+
+    <div class="notice info" style="margin-bottom:24px;">
+      <span class="notice-icon">ℹ</span>
+      <div>
+        <b>About this prototype:</b> Section 2 (School &amp; District Protocols) is fully built and interactive — try the branching scenarios, knowledge check, and reflection activities. Sections 1, 3, 4, and 5 are shown as horizontal previews: the screen layout and content outline are visible, but the activities are not yet functional. This mirrors a real SAM-cycle prototype, where one vertical slice is built deep for user testing while the rest of the course is sketched in breadth.
+      </div>
+    </div>
+
+    <h3 style="font-size:15px;margin-bottom:14px;">Module Progress</h3>
+    <div class="module-grid">
+      ${MODULES.map(m => `
+        <div class="module-card" onclick="go('${m.built?'section2':'section'+m.id}'${m.built?",'overview'":''})">
+          <div class="mc-top">
+            <div class="mc-icon" style="background:${colorBg(m.color)};color:${colorFg(m.color)};">${m.icon}</div>
+            <span class="mc-status ${m.built?'built':'preview'}">${m.built ? 'Fully built' : 'Preview only'}</span>
+          </div>
+          <div class="mc-title">Module ${m.id}: ${m.title}</div>
+          <div class="mc-desc">${m.desc}</div>
+          <div class="mc-progress-track"><div class="mc-progress-fill" style="width:${m.built ? '0' : '0'}%;background:${m.built?'var(--teal)':'#D3D1C7'};"></div></div>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+function renderPreviewModule(id) {
+  const m = MODULES.find(x=>x.id===id);
+  const outlines = {
+    1: [
+      "Understanding Student Rights and Educational Access",
+      "Student Privacy and Confidentiality",
+      "Creating a Common Vocabulary",
+      "Recognizing Student Concerns and Fear",
+      "Application Activities and Scenarios",
+    ],
+    3: [
+      "Educator Responsibilities and Professional Boundaries",
+      "Trauma-Informed and Culturally Responsive Responses",
+      "Communication Strategies for Sensitive Situations",
+      "Role-Based Workplace Applications",
+      "Application Activities and Scenarios",
+    ],
+    4: [
+      "Understanding Available Supports",
+      "Connecting Families to Appropriate Resources",
+      "Reducing Fear and Building Confidence for Families",
+      "Resource Navigation Tools",
+      "Application Activities and Scenarios",
+    ],
+    5: [
+      "Understanding School Climate and Belonging",
+      "Recognizing Bullying, Harassment, and Discrimination",
+      "Appropriate Intervention Strategies",
+      "Supporting Union Members, Students, and Families",
+      "Application Activities and Scenarios",
+    ],
+  };
+  const objectives = {
+    1: ["Identify student rights and protections related to immigration status.", "Recognize confidentiality expectations regarding student records.", "Distinguish between myths and facts about immigrant student access to education."],
+    3: ["Identify educator responsibilities when supporting immigrant students and families.", "Determine appropriate communication strategies for sensitive situations.", "Demonstrate trauma-informed, culturally responsive educator responses."],
+    4: ["Identify school, district, state, and community resources for immigrant families.", "Determine when and how to refer families to appropriate supports.", "Identify communication approaches that reduce fear and confusion."],
+    5: ["Identify behaviors that contribute to exclusion or bullying related to immigration concerns.", "Determine appropriate intervention strategies during incidents.", "Apply strategies that foster safe, affirming school environments."],
+  };
+
+  return `
+    <div class="eyebrow">Module ${m.id} · Horizontal preview</div>
+    <h1 class="page-title">${m.title}</h1>
+    <p class="page-sub">${m.desc}</p>
+
+    <div class="notice preview" style="margin-bottom:22px;">
+      <span class="notice-icon">◐</span>
+      <div><b>Preview only:</b> this screen demonstrates layout and content sequencing for Module ${m.id}. Interactions (knowledge checks, scenarios, reflections) are not yet built. Full interactivity for this module follows the same pattern already built out in Section 2.</div>
+    </div>
+
+    <div class="card locked-overlay" style="margin-bottom:16px;">
+      <span class="locked-tag">Not yet functional</span>
+      <div class="eyebrow" style="margin-bottom:10px;">Module objectives</div>
+      <ul style="margin:0;padding-left:18px;font-size:13.6px;color:var(--ink-soft);line-height:1.8;">
+        ${objectives[m.id].map(o=>`<li>${o}</li>`).join("")}
+      </ul>
+    </div>
+
+    <div class="card locked-overlay">
+      <span class="locked-tag">Not yet functional</span>
+      <div class="eyebrow" style="margin-bottom:10px;">Content outline</div>
+      ${outlines[m.id].map((o,i)=>`
+        <div class="proto-step">
+          <div class="proto-step-num" style="background:${colorFg(m.color)};">${i+1}</div>
+          <div>
+            <div class="proto-step-title">${o}</div>
+            <div class="proto-step-desc">Screen layout to follow the same structure as Section 2: content presentation, scenario practice, and a knowledge check.</div>
+          </div>
+        </div>
+      `).join("")}
+    </div>
+
+    <div class="btn-row">
+      <button class="btn" disabled>Begin Module ${m.id} (not yet built)</button>
+      <button class="btn btn-primary" onclick="go('section2','overview')">See the fully built example: Section 2 →</button>
+    </div>
+  `;
+}
+
+
+/* ============================================================
+   VERTICAL LAYER
+   Section 2: School & District Protocols — fully functional
+   ============================================================ */
+
+function sec2ProgressPct() {
+  return Math.round((STATE.visitedSec2Steps.size / SEC2_STEPS.length) * 100);
+}
+
+function renderStepPills() {
+  return `<div class="steps">
+    ${SEC2_STEPS.map(s => {
+      const done = STATE.visitedSec2Steps.has(s.id);
+      const current = STATE.sec2sub === s.id;
+      return `<button class="step-pill ${done?'done':''} ${current?'current':''}" onclick="go('section2','${s.id}')">${s.label}</button>`;
+    }).join("")}
+  </div>`;
+}
+
+function renderProgressBar() {
+  const pct = sec2ProgressPct();
+  return `<div class="progress-wrap">
+    <div class="progress-track"><div class="progress-fill" style="width:${pct}%;"></div></div>
+    <div class="progress-label">${pct}% of Section 2 explored</div>
+  </div>`;
+}
+
+function renderSection2() {
+  let body = "";
+  switch (STATE.sec2sub) {
+    case "overview": body = sec2Overview(); break;
+    case "objectives": body = sec2Objectives(); break;
+    case "prior": body = sec2Prior(); break;
+    case "responsibilities": body = sec2Responsibilities(); break;
+    case "dosdonts": body = sec2DosDonts(); break;
+    case "escalation": body = sec2Escalation(); break;
+    case "faq": body = sec2Faq(); break;
+    case "scenario1": body = sec2Scenario1(); break;
+    case "scenario2": body = sec2Scenario2(); break;
+    case "reflection": body = sec2Reflection(); break;
+    case "assessment": body = sec2Assessment(); break;
+    case "summary": body = sec2Summary(); break;
+    default: body = sec2Overview();
+  }
+  return renderProgressBar() + renderStepPills() + body;
+}
+
+function navButtons(prevId, nextId, nextLabel) {
+  return `<div class="btn-row">
+    ${prevId ? `<button class="btn" onclick="go('section2','${prevId}')">← Back</button>` : ""}
+    ${nextId ? `<button class="btn btn-primary" onclick="go('section2','${nextId}')">${nextLabel || 'Continue →'}</button>` : ""}
+  </div>`;
+}
+
+// ---------- OVERVIEW ----------
+function sec2Overview() {
+  return `
+    <span class="tag">Gagné Event 1 · Gain attention</span>
+    <h1 class="page-title">Section 2: School &amp; District Protocols for Immigration Enforcement</h1>
+    <div class="scenario-box">
+      <b>It's 9:15 a.m.</b> A front office staff member calls you over. Two individuals have entered the building and identified themselves as immigration enforcement officers. They are asking to speak with a student. <b>What do you do right now?</b>
+    </div>
+    <p style="color:var(--ink-soft);font-size:14px;">This section will walk you through exactly that situation, and others like it, so you leave with a clear, confident answer.</p>
+    ${navButtons(null, "objectives", "Begin Section 2 →")}
+  `;
+}
+
+// ---------- OBJECTIVES ----------
+function sec2Objectives() {
+  const objs = [
+    "Identify appropriate school and district procedures when immigration enforcement or ICE-related concerns arise.",
+    "Determine appropriate escalation pathways and understand your role and responsibilities as a staff member.",
+    "Distinguish between actions that should and should not occur in immigration-related situations.",
+    "Demonstrate appropriate decision-making during realistic school-based immigration scenarios.",
+  ];
+  return `
+    <span class="tag">Gagné Event 2 · Inform learners of objectives</span>
+    <h1 class="page-title">What you will be able to do</h1>
+    <p class="page-sub">By the end of Section 2, you will:</p>
+    ${objs.map((o,i)=>`
+      <div class="proto-step">
+        <div class="proto-step-num">${i+1}</div>
+        <div class="proto-step-title" style="font-weight:500;">${o}</div>
+      </div>
+    `).join("")}
+    ${navButtons("overview","prior")}
+  `;
+}
+
+// ---------- PRIOR KNOWLEDGE POLL (functional) ----------
+function sec2Prior() {
+  const qs = [
+    { id:"q1", text:"I know the steps my school follows if immigration enforcement arrives." },
+    { id:"q2", text:"I know who to contact first if I witness an immigration-related concern at school." },
+    { id:"q3", text:"I feel confident about what I should and should not say or do in these situations." },
+  ];
+  const opts = ["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"];
+  return `
+    <span class="tag">Gagné Event 3 · Stimulate recall of prior learning</span>
+    <h1 class="page-title">What do you already know?</h1>
+    <p class="page-sub">This quick poll isn't graded — it just helps frame what's ahead. Tap a response for each statement.</p>
+    ${qs.map(q => `
+      <div class="poll-row">
+        <div class="poll-q">${q.text}</div>
+        <div class="poll-scale" id="poll-${q.id}">
+          ${opts.map((o,i) => `<button class="poll-opt ${STATE.pollAnswers[q.id]===i?'selected':''}" onclick="setPoll('${q.id}',${i})">${o}</button>`).join("")}
+        </div>
+      </div>
+    `).join("")}
+    ${navButtons("objectives","responsibilities")}
+  `;
+}
+function setPoll(qid, idx) {
+  STATE.pollAnswers[qid] = idx;
+  render();
+}
+
+// ---------- CONTENT: RESPONSIBILITIES ----------
+function sec2Responsibilities() {
+  const roles = [
+    { role:"All Staff", desc:"Do NOT ask about immigration status. Refer to administrator immediately. Do not allow access to students without principal authorization." },
+    { role:"School Principal", desc:"Primary point of contact. Contact the district legal team and superintendent before granting any access. Document all interactions." },
+    { role:"Front Office", desc:"Do not provide information about students. Say: \"I need to involve our principal.\" Do not sign any documents." },
+    { role:"Union Rep", desc:"Support fellow members. Know your rights. Contact MSEA if staff are being pressured to act outside their role." },
+  ];
+  return `
+    <span class="tag">Gagné Event 4 · Present the content</span>
+    <h1 class="page-title">Understanding school and district responsibilities</h1>
+    <p class="page-sub">What MSDE guidance says about roles during immigration-related situations.</p>
+    <div class="role-grid">
+      ${roles.map(r => `
+        <div class="role-card">
+          <div class="role-head">${r.role}</div>
+          <div class="role-body">${r.desc}</div>
+        </div>
+      `).join("")}
+    </div>
+    ${navButtons("prior","dosdonts")}
+  `;
+}
+
+// ---------- CONTENT: DO'S AND DON'TS ----------
+function sec2DosDonts() {
+  const dos = [
+    "Remain calm and professional at all times",
+    "Say: \"I need to involve our principal before proceeding\"",
+    "Alert your principal or administrator immediately",
+    "Document the date, time, names, and what was said",
+    "Protect student confidentiality — do not share records",
+    "Contact MSEA if you are pressured to act outside your role",
+  ];
+  const donts = [
+    "Ask students or families about their immigration status",
+    "Allow access to a student without principal authorization",
+    "Sign or accept any documents without legal review",
+    "Share student records or files without proper authorization",
+    "Respond to social media about the incident",
+    "Act alone — always involve your administrator first",
+  ];
+  return `
+    <span class="tag">Gagné Event 4 · Present the content (continued)</span>
+    <h1 class="page-title">What staff should and should not do</h1>
+    <p class="page-sub">This card doubles as a downloadable job aid — see the Summary screen for the PDF version.</p>
+    <div class="dual-col">
+      <div class="col-card">
+        <div class="col-head do">✓ Do</div>
+        <div class="col-body"><ul>${dos.map(d=>`<li>${d}</li>`).join("")}</ul></div>
+      </div>
+      <div class="col-card">
+        <div class="col-head dont">✕ Do not</div>
+        <div class="col-body"><ul>${donts.map(d=>`<li>${d}</li>`).join("")}</ul></div>
+      </div>
+    </div>
+    ${navButtons("responsibilities","escalation")}
+  `;
+}
+
+// ---------- CONTENT: ESCALATION STEPS ----------
+function sec2Escalation() {
+  const steps = [
+    { title:"Stay calm", desc:"Do not engage enforcement officers independently. Say: \"I need to get an administrator.\"" },
+    { title:"Alert principal immediately", desc:"The principal is the primary point of contact. Alert them before any other action." },
+    { title:"Principal contacts district", desc:"Principal notifies the district legal team and superintendent before granting any access." },
+    { title:"Protect student privacy", desc:"Do not share student records, names, or locations without written authorization reviewed by legal counsel." },
+    { title:"Document everything", desc:"Record names, badge numbers, time of arrival, what was requested, and who was contacted." },
+    { title:"Support staff and students", desc:"After the situation is resolved, check in with staff and students. Notify MSEA if staff were pressured." },
+  ];
+  return `
+    <span class="tag">Gagné Event 4 · Present the content (continued)</span>
+    <h1 class="page-title">Step-by-step escalation protocol</h1>
+    <p class="page-sub">Follow these steps when immigration enforcement concerns arise at your school.</p>
+    <div class="card">
+      ${steps.map((s,i)=>`
+        <div class="proto-step">
+          <div class="proto-step-num">${i+1}</div>
+          <div>
+            <div class="proto-step-title">${s.title}</div>
+            <div class="proto-step-desc">${s.desc}</div>
+          </div>
+        </div>
+      `).join("")}
+    </div>
+    ${navButtons("dosdonts","faq")}
+  `;
+}
+
+// ---------- CONTENT: FAQ ACCORDION (functional) ----------
+function sec2Faq() {
+  const faqs = [
+    { q:"Can immigration officers enter my school without permission?", a:"Schools are considered sensitive locations. Officers should not enter without prior approval. Your principal must be contacted before any access is granted." },
+    { q:"What if an officer shows me a warrant?", a:"Do not act independently. Immediately locate your principal. Only a judicial warrant (not an administrative warrant) may compel school cooperation, and only after legal review." },
+    { q:"Do I have to answer an officer's questions?", a:"No. You may politely say: \"I am not able to speak with you without my administrator present.\" Then locate your principal immediately." },
+    { q:"What if a student is frightened during or after an incident?", a:"Respond with calm reassurance. Connect the student with the school counselor. Do not discuss details of the enforcement situation with students." },
+  ];
+  return `
+    <span class="tag">Gagné Event 4 · Present the content (continued)</span>
+    <h1 class="page-title">Frequently asked questions</h1>
+    <p class="page-sub">Tap a question to expand the answer.</p>
+    <div id="faqList">
+      ${faqs.map((f,i)=>`
+        <div class="faq-item">
+          <button class="faq-q" id="faqq-${i}" onclick="toggleFaq(${i})"><span>${f.q}</span><span class="chev">▾</span></button>
+          <div class="faq-a" id="faqa-${i}"><div class="faq-a-inner">${f.a}</div></div>
+        </div>
+      `).join("")}
+    </div>
+    ${navButtons("escalation","scenario1","Continue to scenario practice →")}
+  `;
+}
+function toggleFaq(i) {
+  const a = document.getElementById("faqa-"+i);
+  const q = document.getElementById("faqq-"+i);
+  const isOpen = a.style.maxHeight && a.style.maxHeight !== "0px";
+  if (isOpen) { a.style.maxHeight = "0px"; q.classList.remove("open"); }
+  else { a.style.maxHeight = a.scrollHeight + "px"; q.classList.add("open"); }
+}
+
+// ---------- SCENARIO 1 (fully functional branching) ----------
+const SCEN1_CHOICES = [
+  { letter:"A", text:"Ask the officers to wait and immediately contact your principal or designee.", correct:true,
+    feedback:"Per MSDE guidance, schools are considered sensitive locations. Immigration enforcement officers do not have an automatic right to access students. Your role is to remain calm, not engage independently, and immediately contact your principal or designee, who is the appropriate point of contact before any further action." },
+  { letter:"B", text:"Escort the officers to the student's classroom so they can speak with the student.", correct:false,
+    feedback:"This bypasses the principal and grants unauthorized access to a student — a serious protocol violation. No staff member should independently escort enforcement officers to a student." },
+  { letter:"C", text:"Call the student to the front office and let the officers speak with them.", correct:false,
+    feedback:"This places the student in a high-stress situation without administrator involvement. The correct first step is always to contact your principal before any contact with the student is arranged." },
+  { letter:"D", text:"Ask the officers for more documentation and sign any forms they present.", correct:false,
+    feedback:"Staff should never sign or accept documents independently. This requires principal and legal review before any compliance with documentation requests." },
+];
+function sec2Scenario1() {
+  const s = STATE.scenario1;
+  return `
+    <span class="tag">Gagné Event 6 · Elicit performance (practice)</span>
+    <h1 class="page-title">Scenario 1 of 2: Immigration enforcement at the front door</h1>
+    <div class="scenario-box">
+      <b>It is 9:20 a.m. on a Tuesday.</b> You are a front office staff member when two individuals enter the school lobby. They show badges and state they are immigration enforcement officers. They say they need to speak with a specific student by name. The student is currently in class. No administrator is immediately visible.
+    </div>
+    <p style="font-weight:600;font-size:14px;margin-bottom:12px;">What should you do FIRST?</p>
+    <div id="scen1choices">
+      ${SCEN1_CHOICES.map((c,i) => `
+        <button class="choice ${s.answered ? (c.correct ? 'correct' : (s.choice===i ? 'incorrect' : 'dim')) : ''}"
+          ${s.answered ? 'disabled' : ''} onclick="answerScenario(1,${i})">
+          <span class="letter">${c.letter}</span>${c.text}
+        </button>
+      `).join("")}
+    </div>
+    ${s.answered ? `
+      <div class="feedback-panel">
+        <div class="feedback-head ${SCEN1_CHOICES[s.choice].correct ? 'correct' : 'incorrect'}">
+          ${SCEN1_CHOICES[s.choice].correct ? '✓ Correct' : '✕ Not quite — here\'s why'}
+        </div>
+        <div class="feedback-body">
+          <p>${SCEN1_CHOICES[s.choice].feedback}</p>
+          ${!SCEN1_CHOICES[s.choice].correct ? `<p><b>The correct answer is A:</b> ${SCEN1_CHOICES[0].feedback}</p>` : ""}
+        </div>
+      </div>
+    ` : ""}
+    ${navButtons("faq", s.answered ? "scenario2" : null, "Continue to Scenario 2 →")}
+  `;
+}
+
+// ---------- SCENARIO 2 (fully functional branching) ----------
+const SCEN2_CHOICES = [
+  { letter:"A", text:"Tell her not to worry — it probably wasn't ICE. She shouldn't let it affect her teaching.", correct:false,
+    feedback:"Dismissing her concern is not supportive and prevents appropriate documentation and follow-up. Even uncertainty about what happened deserves a serious, validating response." },
+  { letter:"B", text:"Listen supportively, acknowledge her concerns, and direct her to the principal and building union rep for guidance and documentation.", correct:true,
+    feedback:"Trauma-informed, supportive responses validate the colleague's fear without dismissing it. Directing her to the principal ensures the incident is documented and escalated properly, and the union rep can provide guidance on her rights." },
+  { letter:"C", text:"Share the incident with other colleagues in the hallway so everyone is aware.", correct:false,
+    feedback:"Sharing incident details informally may breach confidentiality and spread misinformation before the situation has been properly documented and reviewed." },
+  { letter:"D", text:"Tell her she did the right thing by doing nothing, and that it is not her responsibility to act.", correct:false,
+    feedback:"While continuing to teach was appropriate in the moment, telling her she has no responsibility ignores her role in documentation and peer support after the fact." },
+];
+function sec2Scenario2() {
+  const s = STATE.scenario2;
+  return `
+    <span class="tag">Gagné Event 6 · Elicit performance (practice, continued)</span>
+    <h1 class="page-title">Scenario 2 of 2: Supporting a concerned colleague</h1>
+    <div class="scenario-box">
+      <b>After school on Wednesday,</b> a fellow union member and third-grade teacher, Ms. Rivera, pulls you aside. She is visibly shaken. She says: "This morning, two people came into the building and I think they were ICE. I didn't know what to do. I just kept teaching. Was that wrong? I'm scared this will happen again and I won't know how to help my kids."
+    </div>
+    <p style="font-weight:600;font-size:14px;margin-bottom:12px;">Which of the following is the BEST response from you as a colleague?</p>
+    <div id="scen2choices">
+      ${SCEN2_CHOICES.map((c,i) => `
+        <button class="choice ${s.answered ? (c.correct ? 'correct' : (s.choice===i ? 'incorrect' : 'dim')) : ''}"
+          ${s.answered ? 'disabled' : ''} onclick="answerScenario(2,${i})">
+          <span class="letter">${c.letter}</span>${c.text}
+        </button>
+      `).join("")}
+    </div>
+    ${s.answered ? `
+      <div class="feedback-panel">
+        <div class="feedback-head ${SCEN2_CHOICES[s.choice].correct ? 'correct' : 'incorrect'}">
+          ${SCEN2_CHOICES[s.choice].correct ? '✓ Correct' : '✕ Not quite — here\'s why'}
+        </div>
+        <div class="feedback-body">
+          <p>${SCEN2_CHOICES[s.choice].feedback}</p>
+          ${!SCEN2_CHOICES[s.choice].correct ? `<p><b>The correct answer is B:</b> ${SCEN2_CHOICES[1].feedback}</p>` : ""}
+        </div>
+      </div>
+    ` : ""}
+    ${navButtons("scenario1", s.answered ? "reflection" : null, "Continue to reflection →")}
+  `;
+}
+
+function answerScenario(num, idx) {
+  const key = "scenario"+num;
+  if (STATE[key].answered) return;
+  STATE[key].answered = true;
+  STATE[key].choice = idx;
+  STATE.visitedSec2Steps.add(key);
+  render();
+}
+
+// ---------- REFLECTION (functional text inputs) ----------
+const REFLECT_PROMPTS = [
+  "What is my role if immigration enforcement concerns arise at my school?",
+  "Who is my first point of contact, and do I know how to reach them quickly?",
+  "What is one thing I will do differently after completing this section?",
+  "How can I support a union colleague or student who is experiencing fear related to immigration concerns?",
+];
+function sec2Reflection() {
+  return `
+    <span class="tag">Gagné Event 6 + 8 · Elicit performance &amp; assess performance</span>
+    <h1 class="page-title">Reflection: what role do I play?</h1>
+    <p class="page-sub">Not graded — this is a transfer-to-practice activity. Your responses are saved as you type.</p>
+    ${REFLECT_PROMPTS.map((q,i) => `
+      <div class="card" style="margin-bottom:12px;">
+        <div class="reflect-q">${i+1}. ${q}</div>
+        <textarea class="reflect-input" placeholder="Type your response here…" oninput="saveReflection(${i}, this.value)">${STATE.reflections[i] || ""}</textarea>
+        <div class="char-count">${(STATE.reflections[i]||"").length} characters</div>
+      </div>
+    `).join("")}
+    ${navButtons("scenario2","assessment","Continue to knowledge check →")}
+  `;
+}
+function saveReflection(i, val) {
+  STATE.reflections[i] = val;
+  // update char count without full re-render for smooth typing
+  const counts = document.querySelectorAll(".char-count");
+  if (counts[i]) counts[i].textContent = val.length + " characters";
+}
+
+// ---------- KNOWLEDGE CHECK (functional, scored) ----------
+const KC_ITEMS = [
+  { q:"Who is the primary point of contact when immigration enforcement arrives at a school?",
+    opts:["Any available teacher","The front office staff member who greeted them","The school principal","The student's parent or guardian"], correct:2 },
+  { q:"True or False: Front office staff may escort an officer to a student's classroom if asked politely.",
+    opts:["True","False"], correct:1 },
+  { q:"Which type of warrant may compel school cooperation, after legal review?",
+    opts:["An administrative warrant","A judicial warrant","Either type, as long as it's signed","No warrant is ever sufficient"], correct:1 },
+  { q:"A colleague approaches you upset after an immigration incident. Your FIRST step should be…",
+    opts:["Tell her not to worry about it","Post about it in the staff group chat","Listen supportively and direct her to the principal and union rep","Handle it yourself and avoid involving administration"], correct:2 },
+  { q:"What should staff document during an enforcement encounter?",
+    opts:["Only the student's name","Names, badge numbers, time, and what was requested","Nothing — documentation is the principal's job alone","Only what was said by the officers"], correct:1 },
+];
+function sec2Assessment() {
+  return `
+    <span class="tag">Gagné Event 8 · Assess performance</span>
+    <h1 class="page-title">Section 2 knowledge check</h1>
+    <p class="page-sub">5 questions, not graded — used for self-assessment. Select an answer for each question to see immediate feedback.</p>
+    ${KC_ITEMS.map((item,i) => `
+      <div class="kc-item">
+        <div><span class="kc-num">${i+1}</span><span class="kc-q">${item.q}</span></div>
+        <div class="kc-opts">
+          ${item.opts.map((o,j) => `
+            <label class="kc-opt">
+              <input type="radio" name="kc${i}" onchange="answerKC(${i},${j})" ${STATE.kcAnswers[i]===j?'checked':''}>
+              ${o}
+            </label>
+          `).join("")}
+        </div>
+        <div class="kc-result ${STATE.kcAnswers[i]!==undefined ? 'show' : ''} ${STATE.kcAnswers[i]===item.correct ? 'right' : 'wrong'}" id="kcresult${i}">
+          ${STATE.kcAnswers[i]!==undefined ? (STATE.kcAnswers[i]===item.correct ? '✓ Correct' : '✕ Not quite — correct answer: ' + item.opts[item.correct]) : ''}
+        </div>
+      </div>
+    `).join("")}
+    ${navButtons("reflection","summary","Continue to summary →")}
+  `;
+}
+function answerKC(i, j) {
+  STATE.kcAnswers[i] = j;
+  render();
+}
+
+// ---------- SUMMARY / JOB AIDS ----------
+function sec2Summary() {
+  const correctCount = Object.keys(STATE.kcAnswers).filter(k => STATE.kcAnswers[k]===KC_ITEMS[k].correct).length;
+  const totalAnswered = Object.keys(STATE.kcAnswers).length;
+  return `
+    <span class="tag">Gagné Event 9 · Enhance retention and transfer</span>
+    <h1 class="page-title">Section 2 summary</h1>
+    ${totalAnswered > 0 ? `
+      <div class="score-banner">
+        <div>
+          <div class="score-label">Knowledge check score</div>
+          <div class="score-num">${correctCount} / ${KC_ITEMS.length}</div>
+        </div>
+        <div style="font-size:12.5px;color:rgba(255,255,255,0.75);max-width:240px;text-align:right;">
+          ${totalAnswered < KC_ITEMS.length ? `${KC_ITEMS.length - totalAnswered} question(s) not yet answered` : 'All questions answered'}
+        </div>
+      </div>
+    ` : ""}
+
+    <h3 style="font-size:14.5px;margin-bottom:10px;">Just-in-time resources</h3>
+    <div class="jobaid">
+      <div class="jobaid-icon">📄</div>
+      <div><div class="jobaid-title">Quick Reference Card: Do's and Don'ts</div><div class="jobaid-desc">One-page PDF for your desk or lanyard</div></div>
+      <button class="btn jobaid-dl" onclick="alert('In the final product, this downloads a PDF job aid. Simulated in this prototype.')">Download</button>
+    </div>
+    <div class="jobaid">
+      <div class="jobaid-icon">📋</div>
+      <div><div class="jobaid-title">Step-by-Step Escalation Protocol</div><div class="jobaid-desc">Printable flowchart version</div></div>
+      <button class="btn jobaid-dl" onclick="alert('In the final product, this downloads a PDF job aid. Simulated in this prototype.')">Download</button>
+    </div>
+    <div class="jobaid">
+      <div class="jobaid-icon">📞</div>
+      <div><div class="jobaid-title">MSEA Member Support Line</div><div class="jobaid-desc">Contact information card</div></div>
+      <button class="btn jobaid-dl" onclick="alert('In the final product, this downloads a contact card. Simulated in this prototype.')">Download</button>
+    </div>
+
+    <div class="notice info" style="margin-top:22px;">
+      <span class="notice-icon">✓</span>
+      <div>You've completed Section 2. You may return to any screen at any time using the sidebar or step pills above for just-in-time support.</div>
+    </div>
+    ${navButtons("assessment", null)}
+    <div class="btn-row">
+      <button class="btn btn-gold" onclick="go('home')">Return to course home</button>
+    </div>
+  `;
+}
+
+
+/* ============================================================
+   MSEA Immigration Guidance Module — Prototype Application
+   Horizontal layer: Course Home + 5 module landing/overview screens
+   Vertical layer:   Section 2 fully built end-to-end
+   ============================================================ */
+
+const STATE = {
+  route: "home",
+  sec2sub: "overview",
+  scenario1: { answered:false, choice:null },
+  scenario2: { answered:false, choice:null },
+  kcAnswers: {},
+  reflections: {},
+  pollAnswers: {},
+  sec2Progress: 0, // 0-100, computed
+  visitedSec2Steps: new Set(["overview"]),
+};
+
+const SEC2_STEPS = [
+  { id:"overview", label:"Overview" },
+  { id:"objectives", label:"Objectives" },
+  { id:"prior", label:"Prior Knowledge" },
+  { id:"responsibilities", label:"Responsibilities" },
+  { id:"dosdonts", label:"Do's & Don'ts" },
+  { id:"escalation", label:"Escalation Steps" },
+  { id:"faq", label:"FAQ" },
+  { id:"scenario1", label:"Scenario 1" },
+  { id:"scenario2", label:"Scenario 2" },
+  { id:"reflection", label:"Reflection" },
+  { id:"assessment", label:"Knowledge Check" },
+  { id:"summary", label:"Summary" },
+];
+
+const MODULES = [
+  { id:1, title:"Student Rights & Legal Protections", desc:"Student protections, confidentiality expectations, and myths vs. facts about immigrant student access to education.", built:false, icon:"01", color:"purple" },
+  { id:2, title:"School & District Protocols for Immigration Enforcement", desc:"Step-by-step escalation procedures, staff roles, and realistic decision-making scenarios.", built:true, icon:"02", color:"teal" },
+  { id:3, title:"Educator & School Staff Guidance", desc:"Trauma-informed communication, professional boundaries, and role-based workplace applications.", built:false, icon:"03", color:"coral" },
+  { id:4, title:"Resources for Families", desc:"School, district, state, and community resources, plus referral practices that build trust.", built:false, icon:"04", color:"pink" },
+  { id:5, title:"Bullying Prevention & School Climate", desc:"Recognizing exclusion and discrimination, and intervention strategies that foster belonging.", built:false, icon:"05", color:"amber" },
+];
+
+function go(route, sub) {
+  STATE.route = route;
+  if (sub) STATE.sec2sub = sub;
+  if (route === "section2" && sub) STATE.visitedSec2Steps.add(sub);
+  render();
+  window.scrollTo({top:0, behavior:"instant"});
+}
+
+function renderSidebar() {
+  const sb = document.getElementById("sidebar");
+  let html = `
+    <div class="brand">
+      <div class="brand-tag">MSEA Professional Learning</div>
+      <div class="brand-title">Immigration Guidance for Staff &amp; Educators</div>
+    </div>
+    <div class="nav-section-label">Course</div>
+    <ul class="navlist">
+      <li class="navitem">
+        <button class="navlink ${STATE.route==='home'?'active':''}" onclick="go('home')">
+          <span class="num">⌂</span> Course Home
+        </button>
+      </li>
+    </ul>
+    <div class="nav-section-label">Modules</div>
+    <ul class="navlist">
+  `;
+  const shortTitles = {1:"Student Rights", 2:"School & District Protocols", 3:"Educator Guidance", 4:"Family Resources", 5:"Bullying Prevention"};
+  MODULES.forEach(m => {
+    const isActive = (STATE.route === "section"+m.id) || (STATE.route==="section2" && m.id===2);
+    html += `<li class="navitem">
+      <button class="navlink ${isActive?'active':''} ${m.built?'fully-built':''}" onclick="go('${m.built ? 'section2' : 'section'+m.id}'${m.built?",'overview'":''})">
+        <span class="num">${m.id}</span> ${shortTitles[m.id]}
+        <span class="badge">${m.built ? 'Built' : 'Preview'}</span>
+      </button>
+      ${ (STATE.route==='section2' && m.id===2) ? renderSec2SubNav() : "" }
+    </li>`;
+  });
+  html += `</ul>
+    <div class="sidebar-foot">
+      Prototype v1 · SAM iteration 1<br>Built ${new Date().getFullYear()} for design review
+    </div>
+  `;
+  sb.innerHTML = html;
+}
+
+function renderSec2SubNav() {
+  let html = `<ul class="subnav">`;
+  SEC2_STEPS.forEach(s => {
+    html += `<li><button class="subnavlink ${STATE.sec2sub===s.id?'active':''}" onclick="go('section2','${s.id}')">${s.label}</button></li>`;
+  });
+  html += `</ul>`;
+  return html;
+}
+
+function renderTopbar() {
+  const bc = document.getElementById("breadcrumb");
+  const pill = document.getElementById("protoPill");
+  let crumbs = ["MSEA Immigration Guidance"];
+  if (STATE.route === "home") {
+    crumbs.push("Course Home");
+    pill.textContent = "Horizontal preview";
+    pill.className = "proto-pill horizontal";
+  } else if (STATE.route === "section2") {
+    const stepLabel = SEC2_STEPS.find(s=>s.id===STATE.sec2sub)?.label || "";
+    crumbs.push("Section 2: School & District Protocols", stepLabel);
+    pill.textContent = "Fully functional";
+    pill.className = "proto-pill vertical";
+  } else {
+    const num = STATE.route.replace("section","");
+    const mod = MODULES.find(m=>m.id==num);
+    crumbs.push(mod ? mod.title : "Module");
+    pill.textContent = "Horizontal preview";
+    pill.className = "proto-pill horizontal";
+  }
+  bc.innerHTML = crumbs.map((c,i) => i===crumbs.length-1 ? `<b>${c}</b>` : `<span>${c}</span><span class="sep">/</span>`).join("");
+}
+
+function render() {
+  renderSidebar();
+  renderTopbar();
+  const content = document.getElementById("content");
+  if (STATE.route === "home") content.innerHTML = renderHome();
+  else if (STATE.route === "section2") content.innerHTML = renderSection2();
+  else content.innerHTML = renderPreviewModule(parseInt(STATE.route.replace("section","")));
+  attachHandlers();
+}
+
+function attachHandlers() {
+  // All interactions are wired via inline onclick handlers for simplicity in this prototype.
+  // This function exists as an extension point if event delegation is needed later.
+}
+
+document.addEventListener("DOMContentLoaded", () => { go("home"); });
+
+</script>
+</body>
+</html>
